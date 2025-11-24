@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
+
   // Get IP address
   const ip =
     request.headers.get("x-forwarded-for") ||
