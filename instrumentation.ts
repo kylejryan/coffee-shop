@@ -1,5 +1,10 @@
+import { validateJwtSecretAtStartup } from "./lib/jwt-secret";
+
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
+    // Validate JWT configuration at startup - must happen first
+    validateJwtSecretAtStartup();
+
     const { rpsTracker } = await import("./lib/rps-tracker");
     const http = await import("http");
 
