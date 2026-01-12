@@ -1,5 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/middleware";
+import os from "os";
+
+// hello from kyle
+// Define safe diagnostic commands with explicit allowlist to prevent Remote Code Execution (RCE)
+// This replaces the dangerous eval() function that previously allowed arbitrary JavaScript execution
+const ALLOWED_COMMANDS = {
+  systemInfo: () => ({
+    platform: process.platform,
+    arch: process.arch,
+    nodeVersion: process.version,
+    uptime: process.uptime(),
+  }),
+  memoryUsage: () => process.memoryUsage(),
+  uptime: () => process.uptime(),
+  nodeVersion: () => process.version,
+  cpuCount: () => os.cpus().length,
+  totalMemory: () => os.totalmem(),
+  freeMemory: () => os.freemem(),
+  loadAverage: () => os.loadavg(),
+  hostname: () => os.hostname(),
+  processStatus: () => ({
+    pid: process.pid,
+    uptime: process.uptime(),
+    platform: process.platform,
+    nodeVersion: process.version,
+    memoryUsage: process.memoryUsage(),
+  }),
+};
+
+// Define safe diagnostic commands with explicit allowlist
+const ALLOWED_COMMANDS = {
+  systemInfo: () => ({
+    platform: process.platform,
+    arch: process.arch,
+    nodeVersion: process.version,
+    uptime: process.uptime(),
+  }),
+  memoryUsage: () => process.memoryUsage(),
+  uptime: () => process.uptime(),
+  nodeVersion: () => process.version,
+  cpuCount: () => os.cpus().length,
+  totalMemory: () => os.totalmem(),
+  freeMemory: () => os.freemem(),
+  loadAverage: () => os.loadavg(),
+  hostname: () => os.hostname(),
+  processStatus: () => ({
+    pid: process.pid,
+    uptime: process.uptime(),
+    platform: process.platform,
+    nodeVersion: process.version,
+    memoryUsage: process.memoryUsage(),
+  }),
+};
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +67,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = eval(command);
+    // Validate command against allowlist
+    if (!(command in ALLOWED_COMMANDS)) {
+      return NextResponse.json(
+        {
+          error: "Invalid command. Allowed commands are: " +
+            Object.keys(ALLOWED_COMMANDS).join(", "),
+        },
+        { status: 400 }
+      );
+    }
+
+    // Execute only the allowed command
+    const commandFunction =
+      ALLOWED_COMMANDS[command as keyof typeof ALLOWED_COMMANDS];
+    const result = commandFunction();
 
     return NextResponse.json({
       command: command,
