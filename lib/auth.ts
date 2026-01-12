@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { query } from "./db";
+import { getJwtSecret } from "./jwt-secret";
 
 export interface User {
   id: number;
@@ -20,18 +21,20 @@ export async function verifyPassword(
 }
 
 export function generateToken(user: User): string {
+  const secret = getJwtSecret();
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || "fallback-secret",
+    secret,
     { expiresIn: "24h" }
   );
 }
 
 export function verifyToken(token: string): User | null {
   try {
+    const secret = getJwtSecret();
     return jwt.verify(
       token,
-      process.env.JWT_SECRET || "fallback-secret"
+      secret
     ) as User;
   } catch {
     return null;
