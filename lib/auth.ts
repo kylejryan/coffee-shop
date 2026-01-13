@@ -8,6 +8,30 @@ export interface User {
   role: string;
 }
 
+// Validate and retrieve JWT_SECRET at module load time
+function getValidatedJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  
+  if (!secret) {
+    throw new Error(
+      "FATAL: JWT_SECRET environment variable is required for application startup. " +
+      "Please set JWT_SECRET to a strong, random string of at least 32 characters."
+    );
+  }
+  
+  if (secret.length < 32) {
+    throw new Error(
+      "FATAL: JWT_SECRET must be at least 32 characters long for security. " +
+      `Current length: ${secret.length} characters.`
+    );
+  }
+  
+  return secret;
+}
+
+// Validate and cache the secret at module load
+const JWT_SECRET = getValidatedJwtSecret();
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 10);
 }
@@ -22,17 +46,14 @@ export async function verifyPassword(
 export function generateToken(user: User): string {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
-    process.env.JWT_SECRET || "fallback-secret",
+    JWT_SECRET,
     { expiresIn: "24h" }
   );
 }
 
 export function verifyToken(token: string): User | null {
   try {
-    return jwt.verify(
-      token,
-      process.env.JWT_SECRET || "fallback-secret"
-    ) as User;
+    return jwt.verify(token, JWT_SECRET) as User;
   } catch {
     return null;
   }
