@@ -1,0 +1,22 @@
+diff --git a/test-results.txt b/test-results.txt
+new file mode 100644
+index 0000000..a8dad14
+
+Step 1: Logging in as admin...
+✅ Login successful, token obtained
+
+Step 2: Testing negative price (-100)...
+Response Status: 400
+Response Body: {
+  "error": "Price must be a positive number greater than 0"
+}
+✅ PATCHED: Negative price rejected with error: "Price must be a positive number greater than 0"
+
+Step 3: Testing negative stock quantity (-50)...
+Response Status: 400
+Response Body: {
+  "error": "Stock quantity must be a non-negative number"
+}
+✅ PATCHED: Negative stock rejected with error: "Stock quantity must be a non-negative number"
+
+✅ All tests passed! Vulnerability appears to be patched.
