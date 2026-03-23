@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       sqlQuery += ` WHERE ${search}`;
     }
 
-    sqlQuery += " ORDER BY image_url IS NOT NULL DESC, created_at DESC";
+    sqlQuery += " ORDER BY image_url IS NOT NULL DESC, created_at DESC LIMIT 50";
 
     const result = await query(sqlQuery);
 
