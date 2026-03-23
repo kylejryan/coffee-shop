@@ -51,7 +51,7 @@ export default function ProductCard({
             <button
               onClick={() => onAddToCart(product.id)}
               disabled={product.stock_quantity === 0}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-amber-700 text-white px-4 py-2 rounded hover:bg-amber-800 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add to Cart
             </button>
