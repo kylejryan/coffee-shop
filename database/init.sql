@@ -17,7 +17,9 @@ CREATE TABLE products (
     price DECIMAL(10,2) NOT NULL,
     image_url VARCHAR(500),
     stock_quantity INTEGER DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT positive_price CHECK (price > 0),
+    CONSTRAINT non_negative_stock CHECK (stock_quantity >= 0)
 );
 
 -- Orders table
