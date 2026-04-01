@@ -45,9 +45,45 @@ export async function PUT(
     const { name, description, price, image_url, stock_quantity } =
       await request.json();
 
+    // Validate required fields
+    if (!name || !description) {
+      return NextResponse.json(
+        { error: "Name and description are required" },
+        { status: 400 }
+      );
+    }
+
+    // Validate and convert price
+    if (price === undefined || price === null) {
+      return NextResponse.json(
+        { error: "Price is required" },
+        { status: 400 }
+      );
+    }
+
+    const priceNumber = typeof price === "string" ? parseFloat(price) : price;
+    if (isNaN(priceNumber) || priceNumber <= 0) {
+      return NextResponse.json(
+        { error: "Price must be a positive number greater than 0" },
+        { status: 400 }
+      );
+    }
+
+    // Validate and convert stock_quantity
+    let stockNumber = stock_quantity !== undefined ? stock_quantity : 0;
+    if (typeof stockNumber === "string") {
+      stockNumber = parseInt(stockNumber, 10);
+    }
+    if (isNaN(stockNumber) || stockNumber < 0) {
+      return NextResponse.json(
+        { error: "Stock quantity must be a non-negative number" },
+        { status: 400 }
+      );
+    }
+
     const result = await query(
       "UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, stock_quantity = $5 WHERE id = $6 RETURNING *",
-      [name, description, price, image_url, stock_quantity, productId]
+      [name, description, priceNumber, image_url, stockNumber, productId]
     );
 
     return NextResponse.json(result.rows[0]);
