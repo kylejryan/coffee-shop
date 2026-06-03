@@ -22,5 +22,8 @@ export async function register() {
     process.on("SIGINT", () => handleShutdown("SIGINT"));
 
     console.log("RPS tracking initialized. Press Ctrl+C to view report on shutdown.");
+
+    const publicPort = process.env.PUBLIC_PORT ?? "3000";
+    console.log(`\n  ➜  App ready, open:  http://localhost:${publicPort}\n`);
   }
 }
