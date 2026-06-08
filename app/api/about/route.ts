@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       about: `Here's what we know about ${coffee}:`,
+      query: coffee,
       count: coffees.length,
       results: coffees,
     });
