@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       team: "Meet the crew!",
+      tagline: "Fueled by caffeine since 2019 ☕",
       role,
       count: members.length,
       members: members.map((m, i) => ({
