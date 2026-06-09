@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
       query: coffee,
       count: coffees.length,
       results: coffees,
+      brewedAt: "right here, fresh",
     });
   } catch (error) {
     console.error("Error fetching coffee info:", error);
